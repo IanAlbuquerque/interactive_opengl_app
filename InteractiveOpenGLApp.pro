@@ -26,13 +26,20 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    openglcanvascontext.cpp
+    openglcanvascontext.cpp \
+    beziercurve.cpp
 
 HEADERS += \
         mainwindow.h \
-    openglcanvascontext.h
+    openglcanvascontext.h \
+    beziercurve.h
 
 FORMS += \
         mainwindow.ui
 
 LIBS += -lopengl32 -lglu32
+
+DISTFILES +=
+
+RESOURCES += \
+    shaderresources.qrc

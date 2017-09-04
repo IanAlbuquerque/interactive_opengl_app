@@ -5,9 +5,14 @@
 #include <QOpenGLFunctions>
 #include <QOpenGLBuffer>
 #include <QOpenGLShaderProgram>
+#include <QObject>
+#include <vector>
+
+#include "beziercurve.h"
 
 class OpenGLCanvasContext
-    : public QOpenGLWidget, protected QOpenGLFunctions
+    : public QOpenGLWidget,
+      protected QOpenGLFunctions
 {
 public:
   explicit OpenGLCanvasContext(QWidget* parent = 0);
@@ -21,14 +26,24 @@ public:
   void mouseMoveEvent(QMouseEvent *event) override;
   void mouseReleaseEvent(QMouseEvent *event) override;
 
+public slots:
+  void onNewCurveButtonClicked();
+
 private:
-  std::vector<QVector3D> points;
+  Q_OBJECT
+
+  std::vector<BezierCurve> bezierCurves;
 
   QOpenGLShaderProgram* shaderProgram;
-  QOpenGLBuffer pointsBuffer;
+  QOpenGLBuffer controlPointsBuffer;
+  QOpenGLBuffer bezierCurvesBuffer;
 
   QMatrix4x4 viewMatrix4x4;
   QMatrix4x4 projectionMatrix4x4;
+
+  bool isDrawingBezierCurve;
+
+  void drawBezierCurve(BezierCurve bezierCurve);
 };
 
 #endif // OPENGLCANVASCONTEXT_H
