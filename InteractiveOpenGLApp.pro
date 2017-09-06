@@ -27,12 +27,14 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     openglcanvascontext.cpp \
-    beziercurve.cpp
+    beziercurve.cpp \
+    compositebeziercurve.cpp
 
 HEADERS += \
         mainwindow.h \
     openglcanvascontext.h \
-    beziercurve.h
+    beziercurve.h \
+    compositebeziercurve.h
 
 FORMS += \
         mainwindow.ui

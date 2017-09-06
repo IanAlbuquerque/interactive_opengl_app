@@ -8,7 +8,7 @@
 #include <QObject>
 #include <vector>
 
-#include "beziercurve.h"
+#include "compositebeziercurve.h"
 
 class OpenGLCanvasContext
     : public QOpenGLWidget,
@@ -22,17 +22,25 @@ public:
   void paintGL() override;
   void resizeGL(int width, int height) override;
 
+  void mouseDoubleClickEvent(QMouseEvent * event) override;
   void mousePressEvent(QMouseEvent *event) override;
   void mouseMoveEvent(QMouseEvent *event) override;
   void mouseReleaseEvent(QMouseEvent *event) override;
+  void leaveEvent(QEvent *event) override;
+  void enterEvent(QEvent *event) override;
 
 public slots:
   void onNewCurveButtonClicked();
+  void onClearCanvasClicked();
+  void onShowControlPointsClicked(int checkState);
+
+signals:
+    void finishedDrawingCurve();
 
 private:
   Q_OBJECT
 
-  std::vector<BezierCurve> bezierCurves;
+  std::vector<CompositeBezierCurve> bezierCurves;
 
   QOpenGLShaderProgram* shaderProgram;
   QOpenGLBuffer controlPointsBuffer;
@@ -42,8 +50,10 @@ private:
   QMatrix4x4 projectionMatrix4x4;
 
   bool isDrawingBezierCurve;
+  bool isMouseInCanvas;
+  bool isControlPointsVisible;
 
-  void drawBezierCurve(BezierCurve bezierCurve);
+  void drawBezierCurve(CompositeBezierCurve bezierCurve);
 };
 
 #endif // OPENGLCANVASCONTEXT_H

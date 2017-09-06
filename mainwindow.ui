@@ -7,11 +7,11 @@
     <x>0</x>
     <y>0</y>
     <width>683</width>
-    <height>387</height>
+    <height>408</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Bezier Curves Drawing App</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -21,6 +21,13 @@
        <widget class="QPushButton" name="newCurveButton">
         <property name="text">
          <string>New Curve</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="clearCanvasButton">
+        <property name="text">
+         <string>Clear Canvas</string>
         </property>
        </widget>
       </item>
@@ -84,6 +91,13 @@
             </layout>
            </item>
           </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="showControlPointsCheck">
+          <property name="text">
+           <string>Show Control Points</string>
+          </property>
          </widget>
         </item>
         <item>

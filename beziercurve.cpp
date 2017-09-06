@@ -5,6 +5,46 @@ BezierCurve::BezierCurve()
 
 }
 
+int BezierCurve::getControlPointWeight(int i)
+{
+  return weights[i];
+}
+
+QVector2D BezierCurve::getControlPoint(int i)
+{
+  return controlPoints[i];
+}
+
+int BezierCurve::numControlPoints()
+{
+  return (this->controlPoints).size();
+}
+
+void BezierCurve::deleteControlPoint(int i)
+{
+  (this->controlPoints).erase((this->controlPoints).begin()+i);
+}
+
+void BezierCurve::moveControlPoint(int i, float x, float y)
+{
+  if(i < 0 || i >= this->numControlPoints())
+  {
+    return;
+  }
+  this->moveControlPoint(i, x, y, (this->weights)[i]);
+}
+
+void BezierCurve::moveControlPoint(int i, float x, float y, float w)
+{
+  if(i < 0 || i >= this->numControlPoints())
+  {
+    return;
+  }
+  (this->controlPoints)[i].setX(x);
+  (this->controlPoints)[i].setY(y);
+  (this->weights)[i] = w;
+}
+
 void BezierCurve::pushControlPoint(QVector2D controlPoint, float weight)
 {
   this->controlPoints.push_back(controlPoint);
