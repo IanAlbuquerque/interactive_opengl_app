@@ -18,6 +18,9 @@ public:
 public slots:
   void onNewCurveButtonClicked();
   void onFinishDrawingCurve();
+  void onSelectedPoint(float x, float y, float w);
+  void onUnselectedAllPoints();
+  void onCoordinateSpinBoxChange(double value);
 
 private:
   Ui::MainWindow *ui;

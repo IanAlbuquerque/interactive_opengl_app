@@ -26,8 +26,11 @@ public:
   void mousePressEvent(QMouseEvent *event) override;
   void mouseMoveEvent(QMouseEvent *event) override;
   void mouseReleaseEvent(QMouseEvent *event) override;
+  void wheelEvent(QWheelEvent  *event) override;
   void leaveEvent(QEvent *event) override;
   void enterEvent(QEvent *event) override;
+
+  void changeCoordinateInput(float x, float y, float w);
 
 public slots:
   void onNewCurveButtonClicked();
@@ -36,6 +39,8 @@ public slots:
 
 signals:
     void finishedDrawingCurve();
+    void selectedPoint(float x, float y, float w);
+    void unselectedAllPoints();
 
 private:
   Q_OBJECT

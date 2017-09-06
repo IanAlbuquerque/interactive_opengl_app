@@ -65,7 +65,7 @@ QVector2D CompositeBezierCurve::getPassingPoint(int i)
   }
 }
 
-int CompositeBezierCurve::getPassingPointWeight(int i)
+float CompositeBezierCurve::getPassingPointWeight(int i)
 {
   if(i == 0)
   {
@@ -77,7 +77,7 @@ int CompositeBezierCurve::getPassingPointWeight(int i)
   }
 }
 
-void CompositeBezierCurve::movePassingPoint(int i, float x, float y, float w)
+void CompositeBezierCurve::movePassingPoint(int i, float x, float y, float w, bool alter)
 {
   if(i < 0 || i >= _numPassingPoints)
   {
@@ -94,21 +94,31 @@ void CompositeBezierCurve::movePassingPoint(int i, float x, float y, float w)
   }
   else if( i == _numPassingPoints - 1)
   {
+    QVector2D usualDif = bezierCurves[i-1].getControlPoint(2) - bezierCurves[i-1].getControlPoint(3);
     bezierCurves[i-1].moveControlPoint(3, x, y, w);
-    QVector2D difLastPoint = bezierCurves[i-1].getControlPoint(3) - bezierCurves[i-1].getControlPoint(0);
-    QVector2D posControlPoint2 = bezierCurves[i-1].getControlPoint(3) - difLastPoint / 3.0f;
-    QVector2D posControlPoint1 = bezierCurves[i-1].getControlPoint(3) - 2.0f * difLastPoint / 3.0f;
-    bezierCurves[i-1].moveControlPoint(2, posControlPoint2[0], posControlPoint2[1]);
-    if(i-2 >= 0)
+    if(alter)
     {
-      QVector2D difMinus2 = bezierCurves[i-2].getControlPoint(0) - bezierCurves[i-2].getControlPoint(3);
-      QVector2D directionPos1AndMinus2 = (bezierCurves[i-1].getControlPoint(0) + difMinus2/3.0f)  - posControlPoint1;
-      directionPos1AndMinus2.normalize();
-      QVector2D posControlPointMinus2 = bezierCurves[i-1].getControlPoint(0) + (difMinus2.length() / 3.0f) * directionPos1AndMinus2;
-      posControlPoint1 = bezierCurves[i-1].getControlPoint(0) - (difMinus2.length() / 3.0f) * directionPos1AndMinus2;
-      bezierCurves[i-2].moveControlPoint(2, posControlPointMinus2[0], posControlPointMinus2[1]);
+      QVector2D difLastPoint = bezierCurves[i-1].getControlPoint(3) - bezierCurves[i-1].getControlPoint(0);
+      QVector2D posControlPoint2 = bezierCurves[i-1].getControlPoint(3) - difLastPoint / 3.0f;
+      QVector2D posControlPoint1 = bezierCurves[i-1].getControlPoint(3) - 2.0f * difLastPoint / 3.0f;
+      bezierCurves[i-1].moveControlPoint(2, posControlPoint2[0], posControlPoint2[1]);
+      if(i-2 >= 0)
+      {
+        QVector2D difMinus2 = bezierCurves[i-2].getControlPoint(0) - bezierCurves[i-2].getControlPoint(3);
+        QVector2D directionPos1AndMinus2 = (bezierCurves[i-1].getControlPoint(0) + difMinus2/3.0f)  - posControlPoint1;
+        directionPos1AndMinus2.normalize();
+        QVector2D posControlPointMinus2 = bezierCurves[i-1].getControlPoint(0) + (difMinus2.length() / 3.0f) * directionPos1AndMinus2;
+        posControlPoint1 = bezierCurves[i-1].getControlPoint(0) - (difMinus2.length() / 3.0f) * directionPos1AndMinus2;
+        bezierCurves[i-2].moveControlPoint(2, posControlPointMinus2[0], posControlPointMinus2[1]);
+      }
+      bezierCurves[i-1].moveControlPoint(1, posControlPoint1[0], posControlPoint1[1]);
     }
-    bezierCurves[i-1].moveControlPoint(1, posControlPoint1[0], posControlPoint1[1]);
+    else
+    {
+      QVector2D newPoint3 = bezierCurves[i-1].getControlPoint(3);
+      QVector2D newPoint2 = newPoint3 + usualDif;
+      bezierCurves[i-1].moveControlPoint(2, newPoint2[0], newPoint2[1]);
+    }
   }
   else
   {
@@ -123,14 +133,14 @@ void CompositeBezierCurve::movePassingPoint(int i, float x, float y, float w)
   }
 }
 
-void CompositeBezierCurve::movePassingPoint(int i, float x, float y)
+void CompositeBezierCurve::movePassingPoint(int i, float x, float y, bool alter)
 {
   if(i < 0 || i >= _numPassingPoints)
   {
     return;
   }
 
-  movePassingPoint(i, x, y, getPassingPointWeight(i));
+  movePassingPoint(i, x, y, getPassingPointWeight(i), alter);
 }
 
 void CompositeBezierCurve::deletePassingPoint(int i)
@@ -213,7 +223,7 @@ QVector2D CompositeBezierCurve::getDerivativePoint(int i)
   }
 }
 
-int CompositeBezierCurve::getDerivativePointWeight(int i)
+float CompositeBezierCurve::getDerivativePointWeight(int i)
 {
   if(i % 2 == 0)
   {

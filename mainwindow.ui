@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>683</width>
-    <height>408</height>
+    <height>379</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,40 +16,27 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <layout class="QHBoxLayout" name="topLayout">
-      <item>
-       <widget class="QPushButton" name="newCurveButton">
-        <property name="text">
-         <string>New Curve</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="clearCanvasButton">
-        <property name="text">
-         <string>Clear Canvas</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <spacer name="horizontalSpacer">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-     </layout>
-    </item>
-    <item>
      <layout class="QHBoxLayout" name="bottomLayout" stretch="0,0">
       <item>
        <layout class="QVBoxLayout" name="leftLayout">
+        <item>
+         <layout class="QHBoxLayout" name="topLayout">
+          <item>
+           <widget class="QPushButton" name="newCurveButton">
+            <property name="text">
+             <string>New Curve</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="clearCanvasButton">
+            <property name="text">
+             <string>Clear Canvas</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
         <item>
          <widget class="QGroupBox" name="coordinatesBox">
           <property name="title">
@@ -66,7 +53,14 @@
               </widget>
              </item>
              <item>
-              <widget class="QDoubleSpinBox" name="xSpinBox"/>
+              <widget class="QDoubleSpinBox" name="xSpinBox">
+               <property name="minimum">
+                <double>-99.989999999999995</double>
+               </property>
+               <property name="singleStep">
+                <double>0.100000000000000</double>
+               </property>
+              </widget>
              </item>
              <item>
               <widget class="QLabel" name="yLabel">
@@ -76,7 +70,14 @@
               </widget>
              </item>
              <item>
-              <widget class="QDoubleSpinBox" name="ySpinBox"/>
+              <widget class="QDoubleSpinBox" name="ySpinBox">
+               <property name="minimum">
+                <double>-99.989999999999995</double>
+               </property>
+               <property name="singleStep">
+                <double>0.100000000000000</double>
+               </property>
+              </widget>
              </item>
              <item>
               <widget class="QLabel" name="wLabel">
@@ -86,7 +87,14 @@
               </widget>
              </item>
              <item>
-              <widget class="QDoubleSpinBox" name="wSpinBox"/>
+              <widget class="QDoubleSpinBox" name="wSpinBox">
+               <property name="minimum">
+                <double>-99.989999999999995</double>
+               </property>
+               <property name="singleStep">
+                <double>0.100000000000000</double>
+               </property>
+              </widget>
              </item>
             </layout>
            </item>

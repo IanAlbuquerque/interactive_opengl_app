@@ -5,7 +5,7 @@ BezierCurve::BezierCurve()
 
 }
 
-int BezierCurve::getControlPointWeight(int i)
+float BezierCurve::getControlPointWeight(int i)
 {
   return weights[i];
 }

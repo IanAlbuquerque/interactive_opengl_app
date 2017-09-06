@@ -71,6 +71,7 @@ void OpenGLCanvasContext::initializeGL()
   bezierCurvesBuffer.create();
 
   resizeGL(width(), height());
+  emit unselectedAllPoints();
 }
 
 
@@ -276,6 +277,25 @@ void OpenGLCanvasContext::mousePressEvent(QMouseEvent *event)
         }
       }
 
+      if(hasPointSelected)
+      {
+        QVector2D pos;
+        float weight;
+        if(movingPointType == PASSING_POINT)
+        {
+          pos = bezierCurves[movingPointBezierIndex].getPassingPoint(movingPointIndex);
+          weight = bezierCurves[movingPointBezierIndex].getPassingPointWeight(movingPointIndex);
+        }
+        else if(movingPointType == DERIVATIVE_POINT)
+        {
+          pos = bezierCurves[movingPointBezierIndex].getDerivativePoint(movingPointIndex);
+          weight = bezierCurves[movingPointBezierIndex].getDerivativePointWeight(movingPointIndex);
+        }
+        emit selectedPoint(pos[0],pos[1],weight);
+      } else {
+        emit unselectedAllPoints();
+      }
+
       if(!isMovingPoint)
       {
         isMovingCanvas = true;
@@ -303,20 +323,24 @@ void OpenGLCanvasContext::mouseMoveEvent(QMouseEvent *event)
   if(isDrawingBezierCurve)
   {
     int lastPassingPointIndex = bezierCurves[bezierCurves.size()-1].numPassingPoints() - 1;
-    bezierCurves[bezierCurves.size()-1].movePassingPoint(lastPassingPointIndex, point[0], point[1]);
+    bezierCurves[bezierCurves.size()-1].movePassingPoint(lastPassingPointIndex, point[0], point[1], true);
 
     update();
   }
   if(isMovingPoint && hasPointSelected)
   {
+    float weight;
     if(movingPointType == PASSING_POINT)
     {
+      weight = bezierCurves[movingPointBezierIndex].getPassingPointWeight(movingPointIndex);
       bezierCurves[movingPointBezierIndex].movePassingPoint(movingPointIndex, point[0], point[1]);
     }
     else if(movingPointType == DERIVATIVE_POINT)
     {
+      weight = bezierCurves[movingPointBezierIndex].getDerivativePointWeight(movingPointIndex);
       bezierCurves[movingPointBezierIndex].moveDerivativePoint(movingPointIndex, point[0], point[1]);
     }
+    emit selectedPoint(point[0],point[1],weight);
     update();
   }
   if(isMovingCanvas && mousePos.distanceToPoint(lastMousePos) > 1.0f/pixelsPerUnit)
@@ -352,6 +376,37 @@ void OpenGLCanvasContext::mouseReleaseEvent(QMouseEvent *event)
   resizeGL(width(), height());
 }
 
+
+void OpenGLCanvasContext::wheelEvent(QWheelEvent *event)
+{
+  int numDegrees = event->delta() / 8;
+  int numSteps = numDegrees / 15;
+  if(numSteps > 0)
+  {
+    pixelsPerUnit *= 1.05;
+  }
+  else
+  {
+    pixelsPerUnit /= 1.05;
+  }
+
+  QVector3D point( event->x(), height()-event->y(), 0 );
+  point = point.unproject( viewMatrix4x4, projectionMatrix4x4, QRect(0,0,width(),height()));
+  QVector2D mousePos(point[0], point[1]);
+
+  resizeGL(width(), height());
+
+  point = QVector3D( event->x(), height()-event->y(), 0 );
+  point = point.unproject( viewMatrix4x4, projectionMatrix4x4, QRect(0,0,width(),height()));
+  QVector2D mouseNewPos(point[0], point[1]);
+
+  canvasTopX -= mouseNewPos[0] - mousePos[0];
+  canvasTopY -= mouseNewPos[1] - mousePos[1];
+
+  resizeGL(width(), height());
+  update();
+}
+
 void OpenGLCanvasContext::onNewCurveButtonClicked()
 {
   isDrawingBezierCurve = true;
@@ -379,8 +434,27 @@ void OpenGLCanvasContext::onShowControlPointsClicked(int checkState)
 void OpenGLCanvasContext::onClearCanvasClicked()
 {
   isDrawingBezierCurve = false;
+  hasPointSelected = false;
+  emit unselectedAllPoints();
   emit finishedDrawingCurve();
   bezierCurves.clear();
   update();
+}
+
+
+void OpenGLCanvasContext::changeCoordinateInput(float x, float y, float w)
+{
+  if(hasPointSelected)
+  {
+    if(movingPointType == PASSING_POINT)
+    {
+      bezierCurves[movingPointBezierIndex].movePassingPoint(movingPointIndex, x, y, w);
+    }
+    else if(movingPointType == DERIVATIVE_POINT)
+    {
+      bezierCurves[movingPointBezierIndex].moveDerivativePoint(movingPointIndex, x, y, w);
+    }
+    update();
+  }
 }
 

@@ -16,7 +16,7 @@ public:
   void moveControlPoint(int i, float x, float y);
   void deleteControlPoint(int i);
   QVector2D getControlPoint(int i);
-  int getControlPointWeight(int i);
+  float getControlPointWeight(int i);
 private:
   std::vector<QVector2D> controlPoints;
   std::vector<float> weights;

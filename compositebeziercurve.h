@@ -14,12 +14,12 @@ public:
   void pushPassingPoint(QVector2D passingPoint, float weight);
   int numPassingPoints();
   QVector2D getPassingPoint(int i);
-  int getPassingPointWeight(int i);
+  float getPassingPointWeight(int i);
   int numDerivativePoints();
   QVector2D getDerivativePoint(int i);
-  int getDerivativePointWeight(int i);
-  void movePassingPoint(int i, float x, float y, float w);
-  void movePassingPoint(int i, float x, float y);
+  float getDerivativePointWeight(int i);
+  void movePassingPoint(int i, float x, float y, float w, bool alter = false);
+  void movePassingPoint(int i, float x, float y, bool alter = false);
   void deletePassingPoint(int i);
   void moveDerivativePoint(int i, float x, float y, float w);
   void moveDerivativePoint(int i, float x, float y);
