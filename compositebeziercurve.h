@@ -21,6 +21,8 @@ public:
   void movePassingPoint(int i, float x, float y, float w);
   void movePassingPoint(int i, float x, float y);
   void deletePassingPoint(int i);
+  void moveDerivativePoint(int i, float x, float y, float w);
+  void moveDerivativePoint(int i, float x, float y);
   int numCurves();
 private:
   int _numPassingPoints;

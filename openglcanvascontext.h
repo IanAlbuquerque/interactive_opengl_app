@@ -52,6 +52,18 @@ private:
   bool isDrawingBezierCurve;
   bool isMouseInCanvas;
   bool isControlPointsVisible;
+  bool isMovingPoint;
+  bool hasPointSelected;
+  int movingPointType;
+  int movingPointBezierIndex;
+  int movingPointIndex;
+  bool isMovingCanvas;
+
+  float canvasTopX;
+  float canvasTopY;
+  float pixelsPerUnit;
+
+  QVector2D lastMousePos;
 
   void drawBezierCurve(CompositeBezierCurve bezierCurve);
 };

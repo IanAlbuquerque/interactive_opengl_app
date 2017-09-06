@@ -86,7 +86,11 @@ void CompositeBezierCurve::movePassingPoint(int i, float x, float y, float w)
 
   if(i == 0)
   {
+    QVector2D difNextPoint = bezierCurves[0].getControlPoint(1) - bezierCurves[0].getControlPoint(0);
     bezierCurves[0].moveControlPoint(0, x, y, w);
+    QVector2D point0 = bezierCurves[0].getControlPoint(0);
+    QVector2D point1 = point0 + difNextPoint;
+    bezierCurves[0].moveControlPoint(1, point1[0], point1[1]);
   }
   else if( i == _numPassingPoints - 1)
   {
@@ -111,6 +115,7 @@ void CompositeBezierCurve::movePassingPoint(int i, float x, float y, float w)
     QVector2D difNextPoint = bezierCurves[i].getControlPoint(1) - bezierCurves[i-1].getControlPoint(3);
     QVector2D difLastPoint = bezierCurves[i-1].getControlPoint(2) - bezierCurves[i-1].getControlPoint(3);
     bezierCurves[i-1].moveControlPoint(3, x, y, w);
+    bezierCurves[i].moveControlPoint(0, x, y, w);
     QVector2D nextPoint = bezierCurves[i-1].getControlPoint(3) + difNextPoint;
     QVector2D lastPoint = bezierCurves[i-1].getControlPoint(3) + difLastPoint;
     bezierCurves[i].moveControlPoint(1, nextPoint[0], nextPoint[1]);
@@ -130,7 +135,57 @@ void CompositeBezierCurve::movePassingPoint(int i, float x, float y)
 
 void CompositeBezierCurve::deletePassingPoint(int i)
 {
-  //_numPassingPoints--;
+  if(i < 0 || i >= _numPassingPoints)
+  {
+    return;
+  }
+
+  if(_numPassingPoints == 0)
+  {
+    return;
+  }
+  else if(_numPassingPoints == 1)
+  {
+    this->bezierCurves.erase(bezierCurves.begin());
+  }
+  else if(_numPassingPoints == 2)
+  {
+    QVector2D ptToKeep;
+    int weightToKeep;
+    if(i==0)
+    {
+      ptToKeep = bezierCurves[0].getControlPoint(3);
+      weightToKeep = bezierCurves[0].getControlPointWeight(3);
+    }
+    else
+    {
+      ptToKeep = bezierCurves[0].getControlPoint(0);
+      weightToKeep = bezierCurves[0].getControlPointWeight(0);
+    }
+    bezierCurves.erase(bezierCurves.begin());
+    bezierCurves.push_back(BezierCurve());
+    bezierCurves[0].pushControlPoint(ptToKeep, weightToKeep);
+  }
+  else
+  {
+    if(i==0)
+    {
+      bezierCurves.erase(bezierCurves.begin());
+    }
+    else if(i==_numPassingPoints-1)
+    {
+      bezierCurves.erase(bezierCurves.end());
+    }
+    else
+    {
+      QVector2D point3 = bezierCurves[i].getControlPoint(3);
+      QVector2D point2 = bezierCurves[i].getControlPoint(2);
+      bezierCurves.erase(bezierCurves.begin()+i);
+      bezierCurves[i-1].moveControlPoint(2, point2[0], point2[1]);
+      bezierCurves[i-1].moveControlPoint(3, point3[0], point3[1]);
+    }
+  }
+  _numPassingPoints--;
 }
 
 
@@ -173,4 +228,46 @@ int CompositeBezierCurve::getDerivativePointWeight(int i)
 int CompositeBezierCurve::numCurves()
 {
   return bezierCurves.size();
+}
+
+
+void CompositeBezierCurve::moveDerivativePoint(int i, float x, float y, float w)
+{
+  if(i < 0 || i >= this->numDerivativePoints())
+  {
+    return;
+  }
+
+  if(i % 2 == 0)
+  {
+    bezierCurves[i/2].moveControlPoint(1,x,y,w);
+    if(i != 0)
+    {
+      QVector2D diff = bezierCurves[i/2].getControlPoint(1) - bezierCurves[i/2].getControlPoint(0);
+      QVector2D reflection = bezierCurves[i/2].getControlPoint(0) - diff;
+      bezierCurves[(i/2)-1].moveControlPoint(2,reflection[0],reflection[1]);
+    }
+  }
+  else
+  {
+    bezierCurves[(i-1)/2].moveControlPoint(2,x,y,w);
+    if(i != this->numDerivativePoints() - 1)
+    {
+      QVector2D diff = bezierCurves[(i-1)/2].getControlPoint(2) - bezierCurves[(i-1)/2].getControlPoint(3);
+      QVector2D reflection = bezierCurves[(i-1)/2].getControlPoint(3) - diff;
+      bezierCurves[(i-1)/2 + 1].moveControlPoint(1,reflection[0],reflection[1]);
+    }
+  }
+
+}
+
+void CompositeBezierCurve::moveDerivativePoint(int i, float x, float y)
+{
+
+  if(i < 0 || i >= this->numDerivativePoints())
+  {
+    return;
+  }
+
+  moveDerivativePoint(i, x, y, getDerivativePointWeight(i));
 }
